@@ -15,7 +15,10 @@ class MetodoComunicacionController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        $metodo = MetodoComunicacion::create($request->validated());
+        $metodo = MetodoComunicacion::create($request->validate([
+            'nombre'    => 'required|string|max:255',
+            'descripcion' => 'required|string|max:255',
+        ]));
         return response()->json($metodo, 201);
     }
 
