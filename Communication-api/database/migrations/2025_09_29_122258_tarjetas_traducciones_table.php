@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('tarjetas_traducciones', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tarjetas_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('tarjeta_id')->constrained()->cascadeOnDelete();
             $table->string('idioma');
             $table->string('frase');
             $table->string('audio');
             $table->timestamps();
 
-            $table->unique(['tarjetas_id']);
+            $table->unique(['tarjeta_id']);
         });
     }
 

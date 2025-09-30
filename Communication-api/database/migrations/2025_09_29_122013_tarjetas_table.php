@@ -15,11 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('uuid');
             $table->string('imagen');
-            $table->foreignId('metodos_comunicacion_id')->constrained('metodos_comunicacion')->cascadeOnDelete();
+            $table->foreignId('metodo_id')->constrained('metodos_comunicacion')->cascadeOnDelete();
             $table->timestamps();
 
 
-            $table->unique(['metodos_comunicacion_id']);
+            $table->unique(['metodo_id']);
         });
     }
 
