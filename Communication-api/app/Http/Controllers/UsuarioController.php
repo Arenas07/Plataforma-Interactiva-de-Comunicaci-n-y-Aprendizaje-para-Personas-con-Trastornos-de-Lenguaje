@@ -2,63 +2,61 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Usuario;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UsuarioController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Listar todos los usuarios (solo admin).
      */
     public function index()
     {
-        //
+        return response()->json(Usuario::with('rol')->get());
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Ver un usuario por id.
      */
-    public function create()
+    public function show($id)
     {
-        //
+        $usuario = Usuario::with('rol')->findOrFail($id);
+        return response()->json($usuario);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Actualizar usuario.
      */
-    public function store(Request $request)
+    public function update(Request $request, $id)
     {
-        //
+        $usuario = Usuario::findOrFail($id);
+
+        $request->validate([
+            'nombre' => 'sometimes|string|max:255',
+            'email' => 'sometimes|string|email|unique:users,email,' . $id,
+            'password' => 'nullable|string|min:6|confirmed',
+            'rol_id' => 'sometimes|exists:roles,id',
+        ]);
+
+        $usuario->update([
+            'nombre' => $request->nombre ?? $usuario->nombre,
+            'email' => $request->email ?? $usuario->email,
+            'rol_id' => $request->rol_id ?? $usuario->rol_id,
+            'password' => $request->password ? Hash::make($request->password) : $usuario->password,
+        ]);
+
+        return response()->json($usuario);
     }
 
     /**
-     * Display the specified resource.
+     * Eliminar usuario.
      */
-    public function show(string $id)
+    public function destroy($id)
     {
-        //
-    }
+        $usuario = Usuario::findOrFail($id);
+        $usuario->delete();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return response()->json(['message' => 'Usuario eliminado correctamente']);
     }
 }

@@ -3,39 +3,55 @@
 namespace App\Http\Controllers;
 
 use App\Models\MetodoComunicacion;
-use Illuminate\Http\JsonResponse;
+use App\Http\Resources\MetodoComunicacionResource;
 use Illuminate\Http\Request;
 
 class MetodoComunicacionController extends Controller
 {
-    public function index(): JsonResponse
+
+    public function index()
     {
-        return response()->json(MetodoComunicacion::all(), 200);
+        return MetodoComunicacionResource::collection(
+            MetodoComunicacion::with('tarjetas')->get()
+        );
     }
 
-    public function store(Request $request): JsonResponse
+    public function show($id)
     {
-        $metodo = MetodoComunicacion::create($request->validate([
-            'nombre'    => 'required|string|max:255',
-            'descripcion' => 'required|string|max:255',
-        ]));
-        return response()->json($metodo, 201);
+        return new MetodoComunicacionResource(
+            MetodoComunicacion::with('tarjetas')->findOrFail($id)
+        );
     }
 
-    public function show(MetodoComunicacion $metodo): JsonResponse
+    public function store(Request $request)
     {
-        return response()->json($metodo, 200);
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'descripcion' => 'nullable|string',
+        ]);
+
+        return MetodoComunicacion::create($validated);
     }
 
-    public function update(Request $request, MetodoComunicacion $metodo): JsonResponse
+    public function update(Request $request, $id)
     {
-        $metodo->update($request->validated());
-        return response()->json($metodo);
+        $metodo = MetodoComunicacion::findOrFail($id);
+
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'descripcion' => 'nullable|string',
+        ]);
+
+        $metodo->update($validated);
+
+        return $metodo;
     }
 
-    public function destroy(MetodoComunicacion $metodo): JsonResponse
+    public function destroy($id)
     {
+        $metodo = MetodoComunicacion::findOrFail($id);
         $metodo->delete();
-        return response()->json(null, 204);
+
+        return response()->json(['message' => 'Método eliminado correctamente']);
     }
 }

@@ -16,19 +16,17 @@ class UsuariosSeeder extends Seeder
         ], [
             'nombre' => 'Administrador Principal',
             'password' => bcrypt('admin123'),
-            'role_id' => Rol::where('nombre', 'Administrador')->first()?->id ?? 1,
+            'rol_id' => Rol::where('nombre', 'Administrador')->first()?->id ?? 1,
         ]);
 
-        // Usuario normal fijo
         Usuario::firstOrCreate([
             'email' => 'usuario@plataforma.com',
         ], [
             'nombre' => 'Usuario Demo',
             'password' => bcrypt('user123'),
-            'role_id' => Rol::where('nombre', 'Usuario')->first()?->id ?? 2,
+            'rol_id' => Rol::where('nombre', 'Usuario')->first()?->id ?? 2,
         ]);
 
-        // Generar usuarios aleatorios con factory
         Usuario::factory(10)->create();
     }
 }

@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\LeccionTarjeta;
 use App\Models\Leccion;
 use App\Models\Tarjeta;
 
@@ -11,16 +10,13 @@ class LeccionesTarjetasSeeder extends Seeder
 {
     public function run(): void
     {
-        LeccionTarjeta::factory()->count(20)->create();
+        $lecciones = Leccion::all();
+        $tarjetas  = Tarjeta::all();
 
-        $leccion = Leccion::first();
-        $tarjeta = Tarjeta::first();
+        foreach ($lecciones as $leccion) {
+            $tarjetasIds = $tarjetas->random(rand(2, 4))->pluck('id')->toArray();
 
-        if ($leccion && $tarjeta) {
-            LeccionTarjeta::firstOrCreate([
-                'lecciones_id' => $leccion->id,
-                'tarjetas_id'  => $tarjeta->id,
-            ]);
+            $leccion->tarjetas()->syncWithoutDetaching($tarjetasIds);
         }
     }
 }
