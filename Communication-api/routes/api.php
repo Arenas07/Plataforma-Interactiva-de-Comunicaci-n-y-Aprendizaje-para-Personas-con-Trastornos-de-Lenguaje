@@ -8,6 +8,7 @@ use App\Http\Controllers\LeccionController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\TarjetaController;
 use App\Http\Controllers\ProgresoController;
+use App\Http\Controllers\ReportController;
 
 Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
@@ -37,3 +38,4 @@ Route::apiResource('metodo', MetodoComunicacionController::class);
 
 Route::apiResource('progreso', ProgresoController::class);
 
+Route::get('/reports/usage', [ReportController::class, 'index']);
